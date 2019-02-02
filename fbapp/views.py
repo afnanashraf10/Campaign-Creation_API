@@ -27,74 +27,6 @@ def home(request):
 	}
 	return render(request, 'fbapp/home.html', context)
 
-def view_campaign(request):
-	FacebookAdsApi.init(access_token=access_token, app_id=app_id, app_secret=app_secret)
-
-	my_account = AdAccount('act_' + user_id)
-
-	campaigns = my_account.get_campaigns()
-	result = []
-	for i in range(len(campaigns)):
-		campaign = {}
-		campaign['name'] = 'campaign-created-by-afnan-'+str(i+1)
-		campaign['id'] = campaigns[i]["id"]
-
-		result.append(campaign)
-
-	context = {
-		'campaigns': result
-	}
-
-	return render(request, 'fbapp/view_campaign.html', context)
-
-def view_adset(request):
-	FacebookAdsApi.init(access_token=access_token, app_id=app_id, app_secret=app_secret)
-
-	my_account = AdAccount('act_' + user_id)
-
-	adsets = my_account.get_ad_sets()
-	adset_id = []
-	for i in range(len(adsets)):
-		adset_id.append(adsets[i]["id"])
-
-	adset_data = []
-	for id in adset_id:
-		adset = AdSet(fbid=id)
-		fields = [
-			AdSet.Field.name,
-			AdSet.Field.effective_status,
-			AdSet.Field.campaign_id,
-			]
-		adset.remote_read(fields=fields)
-
-		result = {}
-		result["id"] = id
-		result["name"] = adset[AdSet.Field.name]
-		result["campid"] = adset[AdSet.Field.campaign_id]
-		adset_data.append(result)
-
-	context = {
-		'adsets': adset_data
-	}
-
-	return render(request, 'fbapp/view_adset.html', context)
-
-def delete_campaign(request, camid):
-	FacebookAdsApi.init(access_token=access_token, app_id=app_id, app_secret=app_secret)
-
-	campaign = Campaign(camid)
-	campaign.remote_delete()
-
-	return redirect('view-campaign')
-
-def delete_adset(request, adid):
-	FacebookAdsApi.init(access_token=access_token, app_id=app_id, app_secret=app_secret)
-
-	adset = AdSet(adid)
-	adset.remote_delete()
-
-	return redirect('view-adset')
-
 def create_campaign(request):
 	FacebookAdsApi.init(access_token=access_token, app_id=app_id, app_secret=app_secret)
 
@@ -165,6 +97,58 @@ def create_ad(request, adsetid):
 
 	return redirect('view-ad')
 
+def view_campaign(request):
+	FacebookAdsApi.init(access_token=access_token, app_id=app_id, app_secret=app_secret)
+
+	my_account = AdAccount('act_' + user_id)
+
+	campaigns = my_account.get_campaigns()
+	result = []
+	for i in range(len(campaigns)):
+		campaign = {}
+		campaign['name'] = 'campaign-created-by-afnan-'+str(i+1)
+		campaign['id'] = campaigns[i]["id"]
+
+		result.append(campaign)
+
+	context = {
+		'campaigns': result
+	}
+
+	return render(request, 'fbapp/view_campaign.html', context)
+
+def view_adset(request):
+	FacebookAdsApi.init(access_token=access_token, app_id=app_id, app_secret=app_secret)
+
+	my_account = AdAccount('act_' + user_id)
+
+	adsets = my_account.get_ad_sets()
+	adset_id = []
+	for i in range(len(adsets)):
+		adset_id.append(adsets[i]["id"])
+
+	adset_data = []
+	for id in adset_id:
+		adset = AdSet(fbid=id)
+		fields = [
+			AdSet.Field.name,
+			AdSet.Field.effective_status,
+			AdSet.Field.campaign_id,
+			]
+		adset.remote_read(fields=fields)
+
+		result = {}
+		result["id"] = id
+		result["name"] = adset[AdSet.Field.name]
+		result["campid"] = adset[AdSet.Field.campaign_id]
+		adset_data.append(result)
+
+	context = {
+		'adsets': adset_data
+	}
+
+	return render(request, 'fbapp/view_adset.html', context)
+
 def view_ad(request, adsetid):
 
 	adset_id = adsetid
@@ -189,6 +173,22 @@ def view_ad(request, adsetid):
 	print(context)
 
 	return render(request, 'fbapp/view_ad.html', context)
+
+def delete_campaign(request, camid):
+	FacebookAdsApi.init(access_token=access_token, app_id=app_id, app_secret=app_secret)
+
+	campaign = Campaign(camid)
+	campaign.remote_delete()
+
+	return redirect('view-campaign')
+
+def delete_adset(request, adid):
+	FacebookAdsApi.init(access_token=access_token, app_id=app_id, app_secret=app_secret)
+
+	adset = AdSet(adid)
+	adset.remote_delete()
+
+	return redirect('view-adset')
 
 def delete_ad(request, adid):
 	ad = Ad(adid)
