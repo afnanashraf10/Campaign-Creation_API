@@ -1,0 +1,9 @@
+{% extends "fbapp/base.html" %}
+{% block content %}
+<h1>Hello World!</h1>
+<h2><a href="{% url 'create-campaign' %}">Create Campaign</a></h2>
+
+
+<h3><a href="{% url 'view-campaign' %}">View Campaign</a></h3>
+<h3><a href="{% url 'view-adset' %}">View Adset</a></h3>
+{% endblock content %}
