@@ -7,6 +7,7 @@ from facebookads.adobjects.adcreative import AdCreative
 from facebookads.adobjects.targeting import Targeting
 from facebook_business.api import FacebookAdsApi
 from django.conf import settings
+import random
 
 access_token = settings.ACCESS_TOKEN
 app_id = settings.APP_ID
@@ -35,7 +36,7 @@ def view_campaign(request):
 	result = []
 	for i in range(len(campaigns)):
 		campaign = {}
-		campaign['name'] = 'campaign-'+str(i+1)
+		campaign['name'] = 'campaign-created-by-afnan-'+str(i+1)
 		campaign['id'] = campaigns[i]["id"]
 
 		result.append(campaign)
@@ -118,7 +119,7 @@ def create_adset(request, camid):
 	my_account = AdAccount('act_'+user_id)
 
 	adset = AdSet(parent_id=my_account.get_id_assured())
-	adset[AdSet.Field.name] = 'Mobile App Installs Ad Set 2'
+	adset[AdSet.Field.name] = 'Ad Set created by afnan -'+str(random.randint(1,10))
 	adset[AdSet.Field.promoted_object] = {
     	'application_id': app_id,
 	}
@@ -146,3 +147,51 @@ def create_adset(request, camid):
 
 	return redirect('view-adset')
 
+def create_ad(request, adsetid):
+	FacebookAdsApi.init(access_token=access_token, app_id=app_id, app_secret=app_secret)
+
+	my_account = AdAccount('act_'+user_id)
+
+	ad = Ad(parent_id=my_account.get_id_assured())
+
+	ad[Ad.Field.name] = 'My Ad'
+	ad[Ad.Field.adset_id] = adsetid
+	ad[Ad.Field.creative] = {
+	'creative_id': "creative",
+	}
+	ad.remote_create(params={
+	'status': Ad.Status.paused,
+	})
+
+	return redirect('view-ad')
+
+def view_ad(request, adsetid):
+
+	adset_id = adsetid
+	ad_set = AdSet(adset_id)
+	fields = [
+		Ad.Field.name,
+		Ad.Field.id,
+	]
+	ad_iter = ad_set.get_ads(fields=fields)
+	ad_data = []
+	for ad in ad_iter:
+		result = {}
+		result["id"] = ad[Ad.Field.id]
+		result["name"] = ad[Ad.Field.name]
+		ad_data.append(result)
+	context = {
+
+		'ads':ad_data
+
+	} 
+
+	print(context)
+
+	return render(request, 'fbapp/view_ad.html', context)
+
+def delete_ad(request, adid):
+	ad = Ad(adid)
+	ad.remote_delete()
+
+	return redirect('view_ad')

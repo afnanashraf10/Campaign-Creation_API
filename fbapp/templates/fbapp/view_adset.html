@@ -2,11 +2,12 @@
 {% block content %}
 	<h1>Adset</h1>
 
-	<table style="width:40%">
+	<table style="width:50%">
 		<tr>
 			<th>Adset Name</th>
 			<th>Adset ID</th> 
 			<th>Campaign ID</th>
+			<th>Ads</th>
 			<th>Action</th>
 		</tr>
 
@@ -15,6 +16,7 @@
 			<td>{{ post.name }}</td>
 			<td>{{ post.id }}</td> 
 			<td>{{ post.campid }}</td>
+			<td><a href="{% url 'create-ad' post.id %}">Create Ad</a></td>
 			<td><a href="{% url 'delete-adset' post.id %}">Delete</a></td>
 		</tr>
 	{% endfor %}

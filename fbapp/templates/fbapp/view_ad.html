@@ -1,0 +1,20 @@
+{% extends "fbapp/base.html" %}
+{% block content %}
+	<h1>Adset</h1>
+
+	<table style="width:40%">
+		<tr>
+			<th>Ad Name</th>
+			<!-- <th>Ad ID</th> -->
+			<th>Action</th>
+		</tr>
+
+	{% for post in ads %}
+		<tr>
+			<td>{{ post.name }}</td>
+			<!-- <td>{{ post.id }}</td>
+			<td><a href="{% url 'delete-ad' post.id %}">Delete</a></td>  -->
+		</tr>
+	{% endfor %}
+	</table>
+{% endblock content %}

@@ -9,4 +9,7 @@ urlpatterns = [
     path('delete-adset/<adid>/', views.delete_adset, name='delete-adset'),
     path('create-campaign/', views.create_campaign, name='create-campaign'),
     path('create-adset/<camid>/', views.create_adset, name='create-adset'),
+    path('create-ad/<adsetid>/', views.create_ad, name='create-ad'),
+    path('view-ad/', views.view_ad, name='view-ad'),
+    path('delete-ad/<adid>/', views.delete_ad, name='delete-ad'),
 ]
