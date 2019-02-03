@@ -169,15 +169,21 @@ def view_adset(request):
 
 	return render(request, 'fbapp/view_adset.html', context)
 
-def view_ad(request, adsetid):
+def view_ad(request):
 	FacebookAdsApi.init(access_token=access_token, app_id=app_id, app_secret=app_secret)
+	my_account = AdAccount('act_' + user_id)
+	adsets = my_account.get_ad_sets()
+	adset_id = []
+	for i in range(len(adsets)):
+		adset_id.append(adsets[i]["id"])
 
-	ad_set = AdSet(adsetid)
-	fields = [
-		Ad.Field.name,
-		Ad.Field.id,
-	]
-	ad_iter = ad_set.get_ads(fields=fields)
+	for adset in adset_id:
+		ad_set = AdSet(adset)
+		fields = [
+			Ad.Field.name,
+			Ad.Field.id,
+		]
+		ad_iter = ad_set.get_ads(fields=fields)
 	ad_data = []
 	for ad in ad_iter:
 		result = {}
