@@ -33,9 +33,9 @@ def create_campaign(request):
 	my_account = AdAccount('act_'+user_id)
 
 	campaign = Campaign(parent_id=my_account.get_id_assured())
-	campaign[Campaign.Field.name] = "first campaign"
+	campaign[Campaign.Field.name] = "Campaign created by afnan -"+str(random.randint(1,10))
 	campaign[Campaign.Field.objective] = 'LINK_CLICKS'
-	campaign[Campaign.Field.status] = 'PAUSED'
+	campaign[Campaign.Field.status] = 'ACTIVE'
 
 	campaign.remote_create()
 
@@ -103,17 +103,32 @@ def view_campaign(request):
 	my_account = AdAccount('act_' + user_id)
 
 	campaigns = my_account.get_campaigns()
-	result = []
+	camp_id = []
 	for i in range(len(campaigns)):
-		campaign = {}
-		campaign['name'] = 'campaign-created-by-afnan-'+str(i+1)
-		campaign['id'] = campaigns[i]["id"]
+		camp_id.append(campaigns[i]["id"])
+	campaign_data = []
+	for id in camp_id:
+		campaign = Campaign(fbid=id)
+		fields = [
+			Campaign.Field.id,
+			Campaign.Field.name,
+			Campaign.Field.status,
+		]
+		campaign.remote_read(fields=fields)
 
-		result.append(campaign)
+		result = {}
+		result["id"] = campaign[Campaign.Field.id]
+		result["name"] = campaign[Campaign.Field.name]
+		result["status"] = campaign[Campaign.Field.status]		
+		result["data_1"] = "ACTIVE"
+		result["data_2"] = "PAUSED"
+		campaign_data.append(result)
 
 	context = {
-		'campaigns': result
+		'campaigns': campaign_data
 	}
+
+	print(context)
 
 	return render(request, 'fbapp/view_campaign.html', context)
 
@@ -134,6 +149,7 @@ def view_adset(request):
 			AdSet.Field.name,
 			AdSet.Field.effective_status,
 			AdSet.Field.campaign_id,
+			AdSet.Field.status,
 			]
 		adset.remote_read(fields=fields)
 
@@ -141,18 +157,22 @@ def view_adset(request):
 		result["id"] = id
 		result["name"] = adset[AdSet.Field.name]
 		result["campid"] = adset[AdSet.Field.campaign_id]
+		result["status"] = adset[AdSet.Field.status]
+		result["data_1"] = "ACTIVE"
+		result["data_2"] = "PAUSED"
 		adset_data.append(result)
 
 	context = {
 		'adsets': adset_data
 	}
+	print(context)
 
 	return render(request, 'fbapp/view_adset.html', context)
 
 def view_ad(request, adsetid):
+	FacebookAdsApi.init(access_token=access_token, app_id=app_id, app_secret=app_secret)
 
-	adset_id = adsetid
-	ad_set = AdSet(adset_id)
+	ad_set = AdSet(adsetid)
 	fields = [
 		Ad.Field.name,
 		Ad.Field.id,
@@ -169,8 +189,6 @@ def view_ad(request, adsetid):
 		'ads':ad_data
 
 	} 
-
-	print(context)
 
 	return render(request, 'fbapp/view_ad.html', context)
 
@@ -191,7 +209,27 @@ def delete_adset(request, adid):
 	return redirect('view-adset')
 
 def delete_ad(request, adid):
+	FacebookAdsApi.init(access_token=access_token, app_id=app_id, app_secret=app_secret)
+
 	ad = Ad(adid)
 	ad.remote_delete()
 
 	return redirect('view_ad')
+
+def update_adset(request, adsetid, status):
+	FacebookAdsApi.init(access_token=access_token, app_id=app_id, app_secret=app_secret)
+
+	adset = AdSet(adsetid)
+	adset[AdSet.Field.status] = status
+	adset.remote_update()
+
+	return redirect('view-adset')
+
+def update_campaign(request, campid, status):
+	FacebookAdsApi.init(access_token=access_token, app_id=app_id, app_secret=app_secret)
+
+	campaign = Campaign(campid)
+	campaign[Campaign.Field.status] = status
+	campaign.remote_update()
+
+	return redirect('view-campaign')
