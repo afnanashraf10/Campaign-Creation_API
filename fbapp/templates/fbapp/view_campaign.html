@@ -18,8 +18,8 @@
 			<td>{{ post.name }}</td>
 			<td>{{ post.id }}</td> 
 			<td>{{ post.status }}</td>
-			<td><a href="{% url 'update-campaign' post.id post.data_1 %}">Active</a></td>
-			<td><a href="{% url 'update-campaign' post.id post.data_2 %}">Paused</a></td>
+			<td><a href="{% url 'update-campaign' post.id post.data_1 %}">Activate</a></td>
+			<td><a href="{% url 'update-campaign' post.id post.data_2 %}">Disable</a></td>
 			<td><a href="{% url 'create-adset' post.id %}">Create Adset</a></td>
 			<td><a href="{% url 'delete-campaign' post.id %}">Delete</a></td>
 		</tr>
