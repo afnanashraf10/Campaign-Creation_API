@@ -8,9 +8,8 @@
 			<th>Adset ID</th> 
 			<th>Campaign ID</th>
 			<th>Status</th>
+			<th>Action</th>
 			<th>Ads</th>
-			<th>Active</th>
-			<th>Pause</th>
 			<th>Action</th>
 		</tr>
 
@@ -20,9 +19,14 @@
 			<td>{{ post.id }}</td> 
 			<td>{{ post.campid }}</td>
 			<td>{{ post.status }}</td>
+			<td>
+				{% if post.status == post.data_1 %}
+					<a href="{% url 'update-adset' post.id post.data_2 %}">Disable</a>
+				{% else %}
+					<a href="{% url 'update-adset' post.id post.data_1 %}">Activate</a>
+				{% endif %}
+			</td>
 			<td><a href="{% url 'create-ad' post.id %}">Create Ad</a></td>
-			<td><a href="{% url 'update-adset' post.id post.data_1 %}">Activate</a></td>
-			<td><a href="{% url 'update-adset' post.id post.data_2 %}">Disable</a></td>
 			<td><a href="{% url 'delete-adset' post.id %}">Delete</a></td>
 		</tr>
 	{% endfor %}
