@@ -127,7 +127,7 @@ def view_campaign(request):
 	context = {
 		'campaigns': campaign_data
 	}
-	
+
 	return render(request, 'fbapp/view_campaign.html', context)
 
 def view_adset(request):
@@ -163,7 +163,6 @@ def view_adset(request):
 	context = {
 		'adsets': adset_data
 	}
-	print(context)
 
 	return render(request, 'fbapp/view_adset.html', context)
 
